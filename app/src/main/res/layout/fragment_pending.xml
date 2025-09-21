@@ -6,4 +6,8 @@
     tools:context=".fragments.PendingFragment">
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_pending_tasks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>
