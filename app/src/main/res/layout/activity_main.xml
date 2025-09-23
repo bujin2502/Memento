@@ -1,38 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/nav_drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="0dp"
-        android:layout_height="75dp"
-        app:tabMode="fixed"
-        android:backgroundTint="@color/color_primary"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="@color/color_accent"
-        app:tabRippleColor="@color/color_primary_dark"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/white"
-        app:tabIconTint="@color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <!-- @color/purple_200 je #CE93D8 što je svijetlo ljubičasta nijansa -->
-    <!-- @color/teal_700 je #00796B  što je tamna, zasićenoj tirkizno-zelenoj nijansa-->
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewpager"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabs"/>
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="0dp"
+            android:layout_height="75dp"
+            android:backgroundTint="@color/color_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabGravity="fill"
+            app:tabIconTint="@color/white"
+            app:tabIndicatorColor="@color/color_accent"
+            app:tabMode="fixed"
+            app:tabRippleColor="@color/color_primary_dark"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/white" />
+        <!-- @color/purple_200 je #CE93D8 što je svijetlo ljubičasta nijansa -->
+        <!-- @color/teal_700 je #00796B  što je tamna, zasićenoj tirkizno-zelenoj nijansa-->
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabs" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_view" />
+</androidx.drawerlayout.widget.DrawerLayout>

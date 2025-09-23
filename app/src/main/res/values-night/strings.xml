@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="task_name">Task name</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="category">Category</string>
+    <string name="create_a_new_task">Create a new task</string>
+</resources>
