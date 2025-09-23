@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         tabLayout = findViewById(R.id.tabs)
         viewPager2 = findViewById(R.id.viewpager)
-        navDrawerLayout = findViewById(R.id. nav_drawer_layout)
+        navDrawerLayout = findViewById(R.id.nav_drawer_layout)
         navView = findViewById(R.id.nav_view)
 
         val mainPagerAdapter = MainPagerAdapter(supportFragmentManager, lifecycle)
@@ -64,14 +64,22 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.title) {
-                getString(R.string.tasks_pending) -> viewPager2.setCurrentItem(0, true)
-                getString(R.string.tasks_completed) -> viewPager2.setCurrentItem(1, true)
-                getString(R.string.news) -> viewPager2.setCurrentItem(2, true)
-            }
-            navDrawerLayout.closeDrawers()
-            return@setNavigationItemSelectedListener true
+        mainPagerAdapter.fragmentItems.withIndex().forEach { (index, fragmentItem) ->
+            navView.menu
+                .add(fragmentItem.titleRes)
+                .setIcon(fragmentItem.iconRes)
+                .setCheckable(true)
+                .setChecked((index == 0))
+                .setOnMenuItemClickListener {
+                    viewPager2.setCurrentItem(index, true)
+                    navDrawerLayout.closeDrawers()
+                    return@setOnMenuItemClickListener true
+                }
         }
+        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                navView.menu.getItem(position).isChecked = true
+            }
+        })
     }
 }
