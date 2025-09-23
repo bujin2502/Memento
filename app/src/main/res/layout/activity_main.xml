@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -28,8 +27,6 @@
             app:tabRippleColor="@color/color_primary_dark"
             app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/white" />
-        <!-- @color/purple_200 je #CE93D8 što je svijetlo ljubičasta nijansa -->
-        <!-- @color/teal_700 je #00796B  što je tamna, zasićenoj tirkizno-zelenoj nijansa-->
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager"
