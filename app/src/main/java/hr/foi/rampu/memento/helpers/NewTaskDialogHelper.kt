@@ -67,5 +67,6 @@ class NewTaskDialogHelper (private val view: View) {
         val selectedCategory = spinnerCategory.selectedItem as TaskCategory
 
     return Task(newTaskName, selectedDateTime.time, selectedCategory, false)
+        // TO DO: Add task category
     }
 }
