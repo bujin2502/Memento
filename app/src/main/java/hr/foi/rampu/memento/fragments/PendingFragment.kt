@@ -6,16 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import hr.foi.rampu.memento.R
 import hr.foi.rampu.memento.adapters.TasksAdapter
+import hr.foi.rampu.memento.database.TasksDatabase
 import hr.foi.rampu.memento.helpers.MockDataLoader
 import hr.foi.rampu.memento.helpers.NewTaskDialogHelper
 
 class PendingFragment : Fragment() {
-    private val mockTasks = MockDataLoader.getDemoData()
+    private val tasksDao = TasksDatabase.getInstance().getTasksDao()
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnCreateTask: FloatingActionButton
 
@@ -23,20 +25,29 @@ class PendingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // mockTasks.forEach { Log.i("MOCK_PENDING_TASKS", it.name) }
         return inflater.inflate(R.layout.fragment_pending, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById(R.id.rv_pending_tasks)
-        recyclerView.adapter = TasksAdapter(MockDataLoader.getDemoData())
         recyclerView.layoutManager = LinearLayoutManager(view.context)
 
         btnCreateTask = view.findViewById(R.id.fab_pending_fragment_create_task)
         btnCreateTask.setOnClickListener {
             showDialog()
         }
+        loadTaskList()
+    }
 
+    private fun loadTaskList() {
+        val tasks = tasksDao.getAllTasks(false)
+        val tasksAdapter = TasksAdapter(tasks.toMutableList()) { taskId ->
+            parentFragmentManager.setFragmentResult(
+                "task_completed",
+                bundleOf("task_id" to taskId)
+            )
+        }
+        recyclerView.adapter = tasksAdapter
     }
 
     private fun showDialog() {
@@ -46,14 +57,22 @@ class PendingFragment : Fragment() {
 
         val dialogHelper = NewTaskDialogHelper(newTaskDialogView)
         dialogHelper.activateDateTimeListeners()
-        dialogHelper.populateSpinner(MockDataLoader.getDemoCategories())
+
+        val categories = TasksDatabase
+            .getInstance()
+            .getTaskCategoriesDao()
+            .getAllCategories()
+
+        dialogHelper.populateSpinner(categories)
 
         AlertDialog.Builder(context)
             .setView(newTaskDialogView)
             .setTitle(getString(R.string.create_a_new_task))
             .setPositiveButton(getString(R.string.create_a_new_task)) { _, _ ->
-                val newTask = dialogHelper.buildTask()
-                val tasksAdapter = (recyclerView.adapter as TasksAdapter)
+                var newTask = dialogHelper.buildTask()
+                val newTaskId = tasksDao.insertTask(newTask)[0]
+                newTask = tasksDao.getTask(newTaskId.toInt())
+                val tasksAdapter = recyclerView.adapter as TasksAdapter
                 tasksAdapter.addTask(newTask)
             }
             .show()

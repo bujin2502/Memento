@@ -9,6 +9,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import hr.foi.rampu.memento.converters.DateConverter
+import hr.foi.rampu.memento.database.TasksDatabase
 
 @Entity(
     "tasks",
@@ -19,14 +20,16 @@ import hr.foi.rampu.memento.converters.DateConverter
         onDelete = ForeignKey.RESTRICT
     )]
 )
+@TypeConverters(DateConverter::class)
 data class Task(
-    @PrimaryKey(autoGenerate = true) val id : Int,
-    val name : String,
-    @TypeConverters(DateConverter::class)
-    @ColumnInfo(name = "due_date") val dueDate : Date,
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val name: String,
+    @ColumnInfo(name = "due_date") val dueDate: Date,
     @ColumnInfo(name = "category_id", index = true) val categoryId: Int,
-    val completed : Boolean
+    var completed: Boolean
 ) {
-    @Ignore
-    lateinit var category : TaskCategory
+    @delegate:Ignore
+    val category: TaskCategory by lazy {
+        TasksDatabase.getInstance().getTaskCategoriesDao().getCategoryById(categoryId)
+    }
 }

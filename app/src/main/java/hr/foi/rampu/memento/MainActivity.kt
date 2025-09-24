@@ -12,9 +12,11 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import hr.foi.rampu.memento.adapters.MainPagerAdapter
+import hr.foi.rampu.memento.database.TasksDatabase
 import hr.foi.rampu.memento.fragments.CompletedFragment
 import hr.foi.rampu.memento.fragments.NewsFragment
 import hr.foi.rampu.memento.fragments.PendingFragment
+import hr.foi.rampu.memento.helpers.MockDataLoader
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
@@ -27,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         tabLayout = findViewById(R.id.tabs)
         viewPager2 = findViewById(R.id.viewpager)
-        navDrawerLayout = findViewById(R.id. nav_drawer_layout)
+        navDrawerLayout = findViewById(R.id.nav_drawer_layout)
         navView = findViewById(R.id.nav_view)
 
         val mainPagerAdapter = MainPagerAdapter(supportFragmentManager, lifecycle)
@@ -73,5 +75,8 @@ class MainActivity : AppCompatActivity() {
             navDrawerLayout.closeDrawers()
             return@setNavigationItemSelectedListener true
         }
+
+        TasksDatabase.buildInstance(applicationContext)
+        MockDataLoader.loadMockData()
     }
 }
