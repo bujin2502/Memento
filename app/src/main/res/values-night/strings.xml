@@ -5,4 +5,6 @@
     <string name="time">Time</string>
     <string name="category">Category</string>
     <string name="create_a_new_task">Create a new task</string>
+    <string name="refresh_news_button_desc">Refresh news button desc</string>
+    <string name="news_ws_err_msg">News Ws ERR MSG</string>
 </resources>
