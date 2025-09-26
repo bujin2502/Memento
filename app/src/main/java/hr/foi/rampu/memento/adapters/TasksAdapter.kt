@@ -1,17 +1,21 @@
 package hr.foi.rampu.memento.adapters
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.SurfaceView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import hr.foi.rampu.memento.R
 import hr.foi.rampu.memento.database.TasksDatabase
 import hr.foi.rampu.memento.entities.Task
+import hr.foi.rampu.memento.services.TaskTimerService
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class TasksAdapter(
@@ -47,9 +51,7 @@ class TasksAdapter(
     }
 
 
-
     override fun getItemCount() = tasksList.size
-
 
 
     inner class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -57,9 +59,31 @@ class TasksAdapter(
         private val taskName: TextView
         private val taskDueDate: TextView
         private val taskCategoryColor: SurfaceView
+        private val taskTimerIcon: ImageView = view.findViewById(R.id.iv_task_timer)
+        private var isTimerActive = false
 
 
         init {
+            view.setOnClickListener {
+                if (Date() < tasksList[adapterPosition].dueDate) {
+                    val intent = Intent(view.context, TaskTimerService::class.java).apply {
+                        putExtra("task_id", tasksList[adapterPosition].id)
+                    }
+
+                    isTimerActive = !isTimerActive
+
+                    if (isTimerActive) {
+                        taskTimerIcon.visibility = View.VISIBLE
+                    } else {
+                        intent.putExtra("cancel", true)
+                        taskTimerIcon.visibility = View.GONE
+                    }
+
+                    view.context.startService(intent)
+                } else if (taskTimerIcon.visibility == View.VISIBLE) {
+                    taskTimerIcon.visibility = View.GONE
+                }
+            }
             taskName = view.findViewById(R.id.tv_task_name)
             taskDueDate = view.findViewById(R.id.tv_task_due_date)
             taskCategoryColor = view.findViewById(R.id.sv_task_category_color)
@@ -99,6 +123,16 @@ class TasksAdapter(
             taskName.text = task.name
             taskDueDate.text = sdf.format(task.dueDate)
             taskCategoryColor.setBackgroundColor(Color.parseColor(task.category.color))
+        }
+    }
+
+    fun removeTaskWithId(deletedTaskId: Int) {
+        val deletedIndex = tasksList.indexOfFirst { task ->
+            task.id == deletedTaskId
+        }
+        if (deletedIndex != -1) {
+            tasksList.removeAt(deletedIndex)
+            notifyItemRemoved(deletedIndex)
         }
     }
 }

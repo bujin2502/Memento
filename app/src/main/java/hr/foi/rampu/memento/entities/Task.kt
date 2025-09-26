@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import hr.foi.rampu.memento.converters.DateConverter
 import hr.foi.rampu.memento.database.TasksDatabase
+import java.util.Calendar
 
 @Entity(
     "tasks",
@@ -31,5 +32,13 @@ data class Task(
     @delegate:Ignore
     val category: TaskCategory by lazy {
         TasksDatabase.getInstance().getTaskCategoriesDao().getCategoryById(categoryId)
+    }
+
+    fun isOverdue(): Boolean {
+        val dateFromMonthAgo = Calendar.getInstance().apply {
+            add(Calendar.DATE, -30)
+        }.time
+
+        return dueDate.before(dateFromMonthAgo)
     }
 }

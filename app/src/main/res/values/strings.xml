@@ -13,4 +13,5 @@
     <string name="news_list_item_image_desc">News list item image desc</string>
     <string name="refresh_news_button_desc">Refresh news button desc</string>
     <string name="news_ws_err_msg">News Ws ERR MSG</string>
+    <string name="task_has_timer">Task has timer</string>
 </resources>

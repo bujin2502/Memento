@@ -26,10 +26,19 @@ class CompletedFragment : Fragment() {
         val completedTasks = tasksDao.getAllTasks(true)
         recyclerView.adapter = TasksAdapter(completedTasks.toMutableList())
         recyclerView.layoutManager = LinearLayoutManager(view.context)
-        parentFragmentManager.setFragmentResultListener("task_completed", viewLifecycleOwner) { _, bundle ->
+        parentFragmentManager.setFragmentResultListener(
+            "task_completed",
+            viewLifecycleOwner
+        ) { _, bundle ->
             val addedTaskId = bundle.getInt("task_id")
             val tasksAdapter = recyclerView.adapter as TasksAdapter
             tasksAdapter.addTask(tasksDao.getTask(addedTaskId))
+        }
+        parentFragmentManager.setFragmentResultListener("task_deleted", viewLifecycleOwner)
+        { _, bundle ->
+            val deletedTaskId = bundle.getInt("task_id")
+            val tasksAdapter = recyclerView.adapter as TasksAdapter
+            tasksAdapter.removeTaskWithId(deletedTaskId)
         }
     }
 }

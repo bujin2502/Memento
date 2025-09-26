@@ -1,9 +1,16 @@
 package hr.foi.rampu.memento
 
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -17,12 +24,19 @@ import hr.foi.rampu.memento.fragments.CompletedFragment
 import hr.foi.rampu.memento.fragments.NewsFragment
 import hr.foi.rampu.memento.fragments.PendingFragment
 import hr.foi.rampu.memento.helpers.MockDataLoader
+import hr.foi.rampu.memento.helpers.TaskDeletionServiceHelper
+import hr.foi.rampu.memento.services.TaskDeletionService
+import java.util.concurrent.ScheduledExecutorService
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
     lateinit var viewPager2: ViewPager2
     lateinit var navDrawerLayout: DrawerLayout
     lateinit var navView: NavigationView
+    private var serviceConnection: ServiceConnection? = null
+    private var scheduledExecutorService: ScheduledExecutorService? = null
+    private lateinit var taskDeletionServiceHelper: TaskDeletionServiceHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -78,5 +92,22 @@ class MainActivity : AppCompatActivity() {
 
         TasksDatabase.buildInstance(applicationContext)
         MockDataLoader.loadMockData()
+
+        taskDeletionServiceHelper = TaskDeletionServiceHelper(this)
+        activateTaskDeletionService()
+    }
+
+    private fun activateTaskDeletionService() {
+        taskDeletionServiceHelper.activateTaskDeletionService { deletedTaskId ->
+            supportFragmentManager.setFragmentResult(
+                "task_deleted",
+                        bundleOf("task_id" to deletedTaskId)
+            )
+        }
+    }
+
+    override fun onDestroy() {
+        taskDeletionServiceHelper.deactivateTaskDeletionService()
+        super.onDestroy()
     }
 }
