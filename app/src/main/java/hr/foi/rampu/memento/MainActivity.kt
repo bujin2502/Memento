@@ -1,13 +1,8 @@
 package hr.foi.rampu.memento
 
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.SystemClock
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -25,8 +20,12 @@ import hr.foi.rampu.memento.fragments.NewsFragment
 import hr.foi.rampu.memento.fragments.PendingFragment
 import hr.foi.rampu.memento.helpers.MockDataLoader
 import hr.foi.rampu.memento.helpers.TaskDeletionServiceHelper
-import hr.foi.rampu.memento.services.TaskDeletionService
 import java.util.concurrent.ScheduledExecutorService
+import kotlin.getValue
+
+import com.google.android.gms.wearable.Wearable
+import com.google.android.gms.wearable.DataClient
+import hr.foi.rampu.sync.WearableSynchronizer
 
 class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private var serviceConnection: ServiceConnection? = null
     private var scheduledExecutorService: ScheduledExecutorService? = null
     private lateinit var taskDeletionServiceHelper: TaskDeletionServiceHelper
+    private val dataClient by lazy { Wearable.getDataClient(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +95,14 @@ class MainActivity : AppCompatActivity() {
 
         taskDeletionServiceHelper = TaskDeletionServiceHelper(this)
         activateTaskDeletionService()
+
+        WearableSynchronizer.sendTasks(
+            TasksDatabase
+                .getInstance()
+                .getTasksDao()
+                .getAllTasks(false),
+            dataClient
+        )
     }
 
     private fun activateTaskDeletionService() {

@@ -1,0 +1,4 @@
+<resources>
+    <string name="hello_world">From the Round world,\nHello, %1$s!</string>
+    <string name="msg_wait_tasks_syncing">Msg Wait task syncing</string>
+</resources>
